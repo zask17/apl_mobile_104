@@ -9,31 +9,49 @@ class MahasiswaAktifPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final mahasiswaState = ref.watch(mahasiswaNotifierProvider);
+    // Memantau provider khusus yang sudah kita beri filter onlyActive: true
+    final mahasiswaAktifState = ref.watch(mahasiswaAktifNotifierProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mahasiswa Aktif'),
+        // Menggunakan warna Teal agar berbeda dengan halaman utama (sesuai kreativitas)
         backgroundColor: Colors.teal,
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh_rounded),
+            onPressed: () => ref.read(mahasiswaAktifNotifierProvider.notifier).refresh(),
+            tooltip: 'Refresh',
+          ),
+        ],
       ),
-      body: mahasiswaState.when(
+      body: mahasiswaAktifState.when(
         loading: () => const LoadingWidget(),
         error: (error, stack) => CustomErrorWidget(
-          message: 'Gagal memuat data',
-          onRetry: () => ref.read(mahasiswaNotifierProvider.notifier).refresh(),
+          message: 'Gagal memuat data: ${error.toString()}',
+          onRetry: () => ref.read(mahasiswaAktifNotifierProvider.notifier).refresh(),
         ),
         data: (mahasiswaList) {
-          // Filter hanya yang aktif secara langsung di UI
-          final aktifList = mahasiswaList.where((m) => m.isAktif).toList();
+          // Jika list kosong (misal semua isAktif: false), tampilkan pesan
+          if (mahasiswaList.isEmpty) {
+            return const Center(
+              child: Text('Tidak ada mahasiswa aktif saat ini.'),
+            );
+          }
 
           return ListView.builder(
             padding: const EdgeInsets.all(16),
-            itemCount: aktifList.length,
+            itemCount: mahasiswaList.length,
             itemBuilder: (context, index) {
+              final mahasiswa = mahasiswaList[index];
               return ModernMahasiswaCard(
-                mahasiswa: aktifList[index],
+                mahasiswa: mahasiswa,
+                // Gradien warna khusus tema Teal untuk Mahasiswa Aktif
                 gradientColors: [Colors.teal.shade300, Colors.teal.shade600],
+                onTap: () {
+                  // Logika saat kartu diklik (opsional)
+                },
               );
             },
           );

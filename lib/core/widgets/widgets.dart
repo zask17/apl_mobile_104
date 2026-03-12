@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../constants/constants.dart';
-import '../theme/app_theme.dart';
+import '../theme/theme.dart';
 
 // Loading Widget
 class LoadingWidget extends StatelessWidget {

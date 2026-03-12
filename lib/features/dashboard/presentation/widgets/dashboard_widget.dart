@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:modul4/core/constants/constants.dart';
-import 'package:modul4/core/theme/app_theme.dart';
+import 'package:modul4/core/theme/theme.dart';
 import 'package:modul4/features/dashboard/data/models/dashboard_model.dart';
 
 /// Widget untuk menampilkan statistik card
