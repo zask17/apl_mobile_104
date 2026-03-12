@@ -1,60 +1,31 @@
-import 'package:modul4/features/dashboard/data/models/dashboard_model.dart';
+import 'package:modul4/features/dosen/data/models/dosen_model.dart';
 
-class DashboardRepository {
-  // Mendapatkan data dashboard
-  Future<DashboardData> getDashboardData() async {
-    // network delay
+class DosenRepository {
+  /// Mendapatkan daftar dosen
+  Future<List<DosenModel>> getDosenList() async {
+    // Simulasi network delay
     await Future.delayed(const Duration(seconds: 1));
 
-    // Data dummy
-    return DashboardData(
-      userName: 'Admin D4TI',
-      lastUpdate: DateTime.now(),
-      stats: [
-        DashboardStats(
-          title: 'Total Mahasiswa',
-          value: '1,200',
-          subtitle: '',
-          // percentage: 8.5,
-          // isIncrease: true,
-        ), // DashboardStats
-        DashboardStats(
-          title: 'Mahasiswa Aktif',
-          value: '550',
-          subtitle: '',
-          // percentage: 5.2,
-          // isIncrease: true,
-        ), // DashboardStats
-        DashboardStats(
-          title: 'Dosen',
-          value: '650',
-          subtitle: '',
-          // percentage: 5.2,
-          // isIncrease: false,
-        ), // DashboardStats
-        DashboardStats(
-          title: 'Profile',
-          value: '',
-          subtitle: '',
-          // percentage: 3.5,
-          // isIncrease: true,
-        ), // DashboardStats
-      ],
-    ); // DashboardData
-  }
-
-  // Refresh dashboard data
-  Future<DashboardData> refreshDashboard() async {
-    return getDashboardData();
-  }
-
-  // Get specific stat by title
-  Future<DashboardStats?> getStatByTitle(String title) async {
-    try {
-      final data = await getDashboardData();
-      return data.stats.firstWhere((stat) => stat.title == title);
-    } catch (e) {
-      return null;
-    }
+    // Data dummy dosen
+    return [
+      DosenModel(
+        nama: 'Anank Prasetyo',
+        nip: '123456789',
+        email: 'anank.prasetyo@example.com',
+        jurusan: 'Teknik Informatika',
+      ),
+      DosenModel(
+        nama: 'Rachman Sinatriya',
+        nip: '987654321',
+        email: 'rachman.sinatriya@example.com',
+        jurusan: 'Teknik Informatika',
+      ),
+      DosenModel(
+        nama: 'Alfian Sukma',
+        nip: '456789123',
+        email: 'alfian.sukma@example.com',
+        jurusan: 'Teknik Informatika',
+      ),
+    ];
   }
 }

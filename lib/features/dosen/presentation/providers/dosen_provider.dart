@@ -5,7 +5,7 @@ import 'package:modul4/features/dosen/data/repositories/dosen_repository.dart';
 // Repository Provider
 final dosenRepositoryProvider = Provider<DosenRepository>((ref) {
   return DosenRepository();
-});
+}); // Provider
 
 // StateNotifier untuk mengelola state dosen
 class DosenNotifier extends StateNotifier<AsyncValue<List<DosenModel>>> {

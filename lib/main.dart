@@ -1,4 +1,4 @@
-import 'package:modul4/core/constants/app_constants.dart';
+import 'package:modul4/core/constants/constants.dart';
 import 'package:modul4/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.light,
       home: DashboardPage(),
-    ); // MaterialApp
+    );
   }
 }
 

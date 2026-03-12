@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:modul4/core/constants/constants.dart';
-import 'package:modul4/features/dosen/data/models/dosen_model.dart';
+import 'package:modul4/features/mahasiswa/data/models/mahasiswa_model.dart';
 
-class ModernDosenCard extends StatefulWidget {
-  final DosenModel dosen;
+class ModernMahasiswaCard extends StatefulWidget {
+  final MahasiswaModel mahasiswa;
   final VoidCallback? onTap;
   final List<Color>? gradientColors;
 
-  const ModernDosenCard({
+  const ModernMahasiswaCard({
     Key? key,
-    required this.dosen,
+    required this.mahasiswa,
     this.onTap,
     this.gradientColors,
   }) : super(key: key);
 
   @override
-  State<ModernDosenCard> createState() => _ModernDosenCardState();
+  State<ModernMahasiswaCard> createState() => _ModernMahasiswaCardState();
 }
 
-class _ModernDosenCardState extends State<ModernDosenCard>
+class _ModernMahasiswaCardState extends State<ModernMahasiswaCard>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
@@ -84,7 +83,6 @@ class _ModernDosenCardState extends State<ModernDosenCard>
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                // Avatar with Gradient
                 Container(
                   width: 60,
                   height: 60,
@@ -93,7 +91,7 @@ class _ModernDosenCardState extends State<ModernDosenCard>
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: gradientColors,
-                    ), // LinearGradient
+                    ),
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
@@ -105,7 +103,7 @@ class _ModernDosenCardState extends State<ModernDosenCard>
                   ),
                   child: Center(
                     child: Text(
-                      widget.dosen.nama.substring(0, 1).toUpperCase(),
+                      widget.mahasiswa.nama.substring(0, 1).toUpperCase(),
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 24,
@@ -115,14 +113,12 @@ class _ModernDosenCardState extends State<ModernDosenCard>
                   ),
                 ),
                 const SizedBox(width: 16),
-
-                // Dosen Information
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.dosen.nama,
+                        widget.mahasiswa.nama,
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -134,26 +130,24 @@ class _ModernDosenCardState extends State<ModernDosenCard>
                       const SizedBox(height: 8),
                       _buildInfoRow(
                         Icons.badge_outlined,
-                        'NIP: ${widget.dosen.nip}',
+                        'NIM: ${widget.mahasiswa.nim}',
                       ),
                       const SizedBox(height: 4),
-                      _buildInfoRow(Icons.email_outlined, widget.dosen.email),
+                      _buildInfoRow(Icons.email_outlined, widget.mahasiswa.email),
                       const SizedBox(height: 4),
                       _buildInfoRow(
                         Icons.school_outlined,
-                        widget.dosen.jurusan,
+                        widget.mahasiswa.jurusan,
                       ),
                     ],
                   ),
                 ),
-
-                // Arrow Icon
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: gradientColors[0].withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
-                  ), // BoxDecoration
+                  ),
                   child: Icon(
                     Icons.arrow_forward_ios_rounded,
                     size: 16,
@@ -182,42 +176,6 @@ class _ModernDosenCardState extends State<ModernDosenCard>
           ),
         ),
       ],
-    );
-  }
-}
-
-
-
-/// Widget untuk menampilkan daftar dosen
-class DosenListView extends StatelessWidget {
-  final List<DosenModel> dosenList;
-  final VoidCallback onRefresh;
-  final bool useModernCard;
-
-  const DosenListView({
-    super.key,
-    required this.dosenList,
-    required this.onRefresh,
-    this.useModernCard = true,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: () async => onRefresh(),
-      child: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: dosenList.length,
-        itemBuilder: (context, index) {
-          final dosen = dosenList[index];
-          return ModernDosenCard(
-            dosen: dosen,
-            onTap: () {
-              // Tambahkan aksi navigasi detail jika diperlukan
-            },
-          );
-        },
-      ),
     );
   }
 }
