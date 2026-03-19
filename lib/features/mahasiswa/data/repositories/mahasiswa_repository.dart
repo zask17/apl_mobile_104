@@ -1,56 +1,34 @@
-import 'package:modul4/features/mahasiswa/data/models/mahasiswa_model.dart';
-
+import 'package:dio/dio.dart';
+import '../models/mahasiswa_model.dart';
 class MahasiswaRepository {
-  /// Mendapatkan daftar seluruh mahasiswa
+  // Tambahkan header User-Agent untuk menghindari error 403
+  final Dio _dio = Dio(BaseOptions(
+    baseUrl: 'https://jsonplaceholder.typicode.com',
+    connectTimeout: const Duration(seconds: 10),
+    receiveTimeout: const Duration(seconds: 10),
+    headers: {
+      'Accept': 'application/json',
+      // Header ini sangat penting agar server mengenali request dari aplikasi mobile
+      'User-Agent': 'PostmanRuntime/7.37.0',
+    },
+  ));
   Future<List<MahasiswaModel>> getMahasiswaList() async {
-    // Simulasi delay network [cite: 907]
-    await Future.delayed(const Duration(milliseconds: 800));
+    try {
+      final response = await _dio.get('/comments');
 
-    return [
-      // Mahasiswa Aktif
-      MahasiswaModel(
-        nama: 'Cale Henituse',
-        nim: '152311513001',
-        email: 'cale.henituse@vokasi.unair.ac.id',
-        jurusan: 'D4 Teknik Informatika',
-        isAktif: true,
-      ),
-      MahasiswaModel(
-        nama: 'Alberu Crossman',
-        nim: '152311513002',
-        email: 'alberu.crossman@vokasi.unair.ac.id',
-        jurusan: 'D4 Teknik Informatika',
-        isAktif: true,
-      ),
-      MahasiswaModel(
-        nama: 'Choi Han',
-        nim: '152311513003',
-        email: 'choi.han@vokasi.unair.ac.id',
-        jurusan: 'D4 Teknik Informatika',
-        isAktif: true,
-      ),
-      // Mahasiswa Tidak Aktif
-      MahasiswaModel(
-        nama: 'Raon Miru',
-        nim: '152311513004',
-        email: 'raon.miru@vokasi.unair.ac.id',
-        jurusan: 'D4 Teknik Informatika',
-        isAktif: false,
-      ),
-      MahasiswaModel(
-        nama: 'Ahmad Fauzi',
-        nim: '152311513005',
-        email: 'ahmad.fauzi@example.com',
-        jurusan: 'Sistem Informasi',
-        isAktif: false,
-      ),
-      MahasiswaModel(
-        nama: 'Siti Aminah',
-        nim: '152311513006',
-        email: 'siti.aminah@example.com',
-        jurusan: 'Teknik Informatika',
-        isAktif: false,
-      ),
-    ];
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data;
+        return data.map((json) => MahasiswaModel.fromJson(json)).toList();
+      } else {
+        throw Exception('Gagal memuat data: ${response.statusCode}');
+      }
+    } on DioException catch (e) {
+      // Penanganan error lebih detail untuk debugging
+      if (e.response != null) {
+        throw Exception('Server Error: ${e.response?.statusCode} - ${e.response?.statusMessage}');
+      } else {
+        throw Exception('Kesalahan Jaringan: ${e.message}');
+      }
+    }
   }
 }

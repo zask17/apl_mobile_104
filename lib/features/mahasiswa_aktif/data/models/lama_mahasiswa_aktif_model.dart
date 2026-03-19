@@ -13,16 +13,18 @@ class MahasiswaAktifModel {
     this.isAktif = true,
   });
 
+  // Mengonversi data dari format JSON ke objek model
   factory MahasiswaAktifModel.fromJson(Map<String, dynamic> json) {
     return MahasiswaAktifModel(
-      nama: json['nama']?.toString() ?? 'Tanpa Nama',
-      nim: json['nim']?.toString() ?? '',
-      email: json['email']?.toString() ?? '',
-      jurusan: json['jurusan']?.toString() ?? 'D4 Teknik Informatika',
+      nama: json['nama'] ?? '',
+      nim: json['nim'] ?? '',
+      email: json['email'] ?? '',
+      jurusan: json['jurusan'] ?? '',
       isAktif: json['isAktif'] ?? true,
     );
   }
 
+  // Mengonversi objek model kembali ke format JSON
   Map<String, dynamic> toJson() {
     return {
       'nama': nama,

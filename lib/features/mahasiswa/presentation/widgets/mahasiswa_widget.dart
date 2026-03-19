@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:modul4/features/mahasiswa/data/models/mahasiswa_model.dart';
+import 'package:apl_mobile_104/features/mahasiswa/data/models/mahasiswa_model.dart';
 
 class ModernMahasiswaCard extends StatefulWidget {
   final MahasiswaModel mahasiswa;
@@ -43,6 +43,7 @@ class _ModernMahasiswaCardState extends State<ModernMahasiswaCard>
 
   @override
   Widget build(BuildContext context) {
+    // Menggunakan warna dari theme jika gradientColors null
     final gradientColors = widget.gradientColors ??
         [
           Theme.of(context).primaryColor,
@@ -83,6 +84,7 @@ class _ModernMahasiswaCardState extends State<ModernMahasiswaCard>
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
+                // Avatar Profil dengan Inisial
                 Container(
                   width: 60,
                   height: 60,
@@ -103,7 +105,10 @@ class _ModernMahasiswaCardState extends State<ModernMahasiswaCard>
                   ),
                   child: Center(
                     child: Text(
-                      widget.mahasiswa.nama.substring(0, 1).toUpperCase(),
+                      // Mengambil huruf pertama dari field 'name' API comments
+                      widget.mahasiswa.name.isNotEmpty
+                          ? widget.mahasiswa.name.substring(0, 1).toUpperCase()
+                          : '?',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 24,
@@ -113,12 +118,13 @@ class _ModernMahasiswaCardState extends State<ModernMahasiswaCard>
                   ),
                 ),
                 const SizedBox(width: 16),
+                // Konten Informasi (Menyesuaikan dengan MahasiswaModel baru)
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.mahasiswa.nama,
+                        widget.mahasiswa.name, // Menggunakan name
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -129,19 +135,18 @@ class _ModernMahasiswaCardState extends State<ModernMahasiswaCard>
                       ),
                       const SizedBox(height: 8),
                       _buildInfoRow(
-                        Icons.badge_outlined,
-                        'NIM: ${widget.mahasiswa.nim}',
+                        Icons.alternate_email_rounded,
+                        widget.mahasiswa.email, // Menggunakan email
                       ),
                       const SizedBox(height: 4),
-                      _buildInfoRow(Icons.email_outlined, widget.mahasiswa.email),
-                      const SizedBox(height: 4),
                       _buildInfoRow(
-                        Icons.school_outlined,
-                        widget.mahasiswa.jurusan,
+                        Icons.comment_outlined,
+                        widget.mahasiswa.body, // Menampilkan isi komentar (body)
                       ),
                     ],
                   ),
                 ),
+                // Icon Navigasi
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:modul4/core/constants/constants.dart';
-import 'package:modul4/core/widgets/widgets.dart';
-import 'package:modul4/features/dashboard/presentation/providers/dashboard_provider.dart';
-import 'package:modul4/features/dashboard/presentation/widgets/dashboard_widget.dart';
-import 'package:modul4/features/mahasiswa/presentation/pages/mahasiswa_page.dart';
-import 'package:modul4/features/mahasiswa_aktif/presentation/pages/mahasiswa_aktif_page.dart';
-import 'package:modul4/features/dosen/presentation/pages/dosen_page.dart';
-import 'package:modul4/features/profile/presentation/pages/profile_page.dart';
+import 'package:apl_mobile_104/core/constants/constants.dart';
+import 'package:apl_mobile_104/core/widgets/widgets.dart';
+import 'package:apl_mobile_104/features/dashboard/presentation/providers/dashboard_provider.dart';
+import 'package:apl_mobile_104/features/dashboard/presentation/widgets/dashboard_widget.dart';
+import 'package:apl_mobile_104/features/mahasiswa/presentation/pages/mahasiswa_page.dart';
+import 'package:apl_mobile_104/features/mahasiswa_aktif/presentation/pages/mahasiswa_aktif_page.dart';
+import 'package:apl_mobile_104/features/dosen/presentation/pages/dosen_page.dart';
+import 'package:apl_mobile_104/features/profile/presentation/pages/profile_page.dart';
 
 class DashboardPage extends ConsumerWidget {
   const DashboardPage({Key? key}) : super(key: key);

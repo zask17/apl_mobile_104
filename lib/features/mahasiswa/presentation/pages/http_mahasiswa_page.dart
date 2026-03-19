@@ -15,17 +15,19 @@ class MahasiswaPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Data Mahasiswa'),
+        elevation: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh_rounded),
             onPressed: () => ref.read(mahasiswaNotifierProvider.notifier).refresh(),
+            tooltip: 'Refresh',
           ),
         ],
       ),
       body: mahasiswaState.when(
         loading: () => const LoadingWidget(),
         error: (error, stack) => CustomErrorWidget(
-          message: 'Gagal memuat data: ${error.toString()}',
+          message: 'Gagal memuat data mahasiswa: ${error.toString()}',
           onRetry: () => ref.read(mahasiswaNotifierProvider.notifier).refresh(),
         ),
         data: (mahasiswaList) {
@@ -35,13 +37,18 @@ class MahasiswaPage extends ConsumerWidget {
               padding: const EdgeInsets.all(16),
               itemCount: mahasiswaList.length,
               itemBuilder: (context, index) {
-                final colors = AppConstants.dashboardGradients[
+                // Menggunakan gradient dari Constants agar tampilan konsisten
+                final gradient = AppConstants.dashboardGradients[
                 index % AppConstants.dashboardGradients.length];
 
                 return ModernMahasiswaCard(
                   mahasiswa: mahasiswaList[index],
-                  gradientColors: colors,
-                  onTap: () {},
+                  gradientColors: gradient,
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Detail: ${mahasiswaList[index].name}')),
+                    );
+                  },
                 );
               },
             ),

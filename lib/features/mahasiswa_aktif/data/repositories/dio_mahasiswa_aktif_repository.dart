@@ -6,18 +6,26 @@ import 'package:http/http.dart' as http;
 import '../models/mahasiswa_aktif_model.dart';
 
 class MahasiswaAktifRepository {
-  // === VERSI HTTP (aktifkan jika tidak ingin pakai Dio) ===
+  // ====================== GANTI SALAH SATU SAJA ======================
+
+  // === VERSI DIO (Rekomendasi) ===
+  final Dio _dio = Dio(BaseOptions(
+    baseUrl: 'https://jsonplaceholder.typicode.com',
+    connectTimeout: const Duration(seconds: 10),
+    receiveTimeout: const Duration(seconds: 10),
+  ));
+
   Future<List<MahasiswaAktifModel>> getMahasiswaAktifList() async {
     try {
-      final response = await http.get(
-        Uri.parse('https://jsonplaceholder.typicode.com/posts'),
-      );
+      final response = await _dio.get('/posts');
 
       if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
+        final List<dynamic> data = response.data;
         return _mapToModel(data);
       }
-      throw Exception('Gagal mengambil data: ${response.statusCode}');
+      throw Exception('Gagal mengambil data');
+    } on DioException catch (e) {
+      throw Exception('Dio Error: ${e.message}');
     } catch (e) {
       throw Exception('Error: $e');
     }

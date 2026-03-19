@@ -1,4 +1,4 @@
-import 'package:modul4/features/dashboard/data/models/dashboard_model.dart';
+import 'package:apl_mobile_104/features/dashboard/data/models/dashboard_model.dart';
 
 class DashboardRepository {
   // Mendapatkan data dashboard

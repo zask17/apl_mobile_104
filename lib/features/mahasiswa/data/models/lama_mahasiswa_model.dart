@@ -1,11 +1,11 @@
-class MahasiswaAktifModel {
+class MahasiswaModel {
   final String nama;
   final String nim;
   final String email;
   final String jurusan;
   final bool isAktif;
 
-  MahasiswaAktifModel({
+  MahasiswaModel({
     required this.nama,
     required this.nim,
     required this.email,
@@ -13,12 +13,12 @@ class MahasiswaAktifModel {
     this.isAktif = true,
   });
 
-  factory MahasiswaAktifModel.fromJson(Map<String, dynamic> json) {
-    return MahasiswaAktifModel(
-      nama: json['nama']?.toString() ?? 'Tanpa Nama',
-      nim: json['nim']?.toString() ?? '',
-      email: json['email']?.toString() ?? '',
-      jurusan: json['jurusan']?.toString() ?? 'D4 Teknik Informatika',
+  factory MahasiswaModel.fromJson(Map<String, dynamic> json) {
+    return MahasiswaModel(
+      nama: json['nama'] ?? '',
+      nim: json['nim'] ?? '',
+      email: json['email'] ?? '',
+      jurusan: json['jurusan'] ?? '',
       isAktif: json['isAktif'] ?? true,
     );
   }

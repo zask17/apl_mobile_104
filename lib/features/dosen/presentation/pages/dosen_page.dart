@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:modul4/core/widgets/widgets.dart';
-import 'package:modul4/features/dosen/presentation/providers/dosen_provider.dart';
-import 'package:modul4/features/dosen/presentation/widgets/dosen_widget.dart';
+import 'package:apl_mobile_104/core/widgets/widgets.dart';
+import 'package:apl_mobile_104/features/dosen/presentation/providers/dosen_provider.dart';
+import 'package:apl_mobile_104/features/dosen/presentation/widgets/dosen_widget.dart';
 
 class DosenPage extends ConsumerWidget {
   const DosenPage({super.key});

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:modul4/core/constants/constants.dart';
-import 'package:modul4/features/dashboard/presentation/providers/dashboard_provider.dart';
+import 'package:apl_mobile_104/core/constants/constants.dart';
+import 'package:apl_mobile_104/features/dashboard/presentation/providers/dashboard_provider.dart';
 
 class ProfilePage extends ConsumerWidget {
   const ProfilePage({super.key});
