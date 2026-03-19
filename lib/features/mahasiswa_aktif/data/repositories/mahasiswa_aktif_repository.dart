@@ -1,35 +1,31 @@
-// lib/features/mahasiswa_aktif/data/repositories/mahasiswa_aktif_repository.dart
-
-import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:http/http.dart' as http;
 import '../models/mahasiswa_aktif_model.dart';
 
 class MahasiswaAktifRepository {
-  // === VERSI HTTP (aktifkan jika tidak ingin pakai Dio) ===
-  Future<List<MahasiswaAktifModel>> getMahasiswaAktifList() async {
+  // Inisialisasi Dio dengan Header untuk keamanan
+  final Dio _dio = Dio(BaseOptions(
+    baseUrl: 'https://jsonplaceholder.typicode.com',
+    connectTimeout: const Duration(seconds: 10),
+    receiveTimeout: const Duration(seconds: 10),
+    headers: {
+      'Accept': 'application/json',
+      'User-Agent': 'Mozilla/5.0',
+    },
+  ));
+
+  // Pastikan nama fungsi ini tepat 'getMahasiswaAktif'
+  Future<List<MahasiswaAktifModel>> getMahasiswaAktif() async {
     try {
-      final response = await http.get(
-        Uri.parse('https://jsonplaceholder.typicode.com/posts'),
-      );
+      final response = await _dio.get('/posts');
 
       if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        return _mapToModel(data);
+        final List<dynamic> data = response.data;
+        return data.map((json) => MahasiswaAktifModel.fromJson(json)).toList();
+      } else {
+        throw Exception('Gagal memuat data (Status: ${response.statusCode})');
       }
-      throw Exception('Gagal mengambil data: ${response.statusCode}');
-    } catch (e) {
-      throw Exception('Error: $e');
+    } on DioException catch (e) {
+      throw Exception('Kesalahan Jaringan: ${e.message}');
     }
-  }
-
-  List<MahasiswaAktifModel> _mapToModel(List<dynamic> data) {
-    return data.map((post) => MahasiswaAktifModel.fromJson({
-      'nama': post['title'] ?? 'Mahasiswa Aktif',
-      'nim': post['id'].toString().padLeft(12, '0'),
-      'email': 'mahasiswa${post['id']}@vokasi.unair.ac.id',
-      'jurusan': 'D4 Teknik Informatika',
-      'isAktif': true,
-    })).toList();
   }
 }
