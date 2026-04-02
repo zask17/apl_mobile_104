@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:apl_mobile_104/core/widgets/widgets.dart';
-import 'package:apl_mobile_104/features/dosen/presentation/providers/dosen_provider.dart';
-import 'package:apl_mobile_104/features/dosen/presentation/widgets/dosen_widget.dart';
+import '../providers/dosen_provider.dart';
+import '../widgets/dosen_widget.dart';
 
 class DosenPage extends ConsumerWidget {
   const DosenPage({super.key});
@@ -10,43 +9,38 @@ class DosenPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final dosenState = ref.watch(dosenNotifierProvider);
+    final savedUsers = ref.watch(savedUsersProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Data Dosen'),
-        elevation: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh_rounded),
-            onPressed: () {
-              ref.invalidate(dosenNotifierProvider);
-            },
-            tooltip: 'Refresh',
+            onPressed: () => ref.invalidate(dosenNotifierProvider),
+            tooltip: "Refresh",
           ),
         ],
       ),
-      body: dosenState.when(
-        // State: Loading
-        loading: () => const LoadingWidget(),
-
-        // State: Error
-        error: (error, stack) => CustomErrorWidget(
-          message: 'Gagal memuat data dosen: ${error.toString()}',
-          onRetry: () {
-            ref.read(dosenNotifierProvider.notifier).refresh();
-          },
-        ),
-
-        // State: memanggil data dosen dari dosen list dan memanggil widget
-        data: (dosenList) {
-          return DosenListView(
-            dosenList: dosenList,
-            onRefresh: () {
-              ref.invalidate(dosenNotifierProvider);
-            },
-            useModernCard: true, // Set to false for simple card
-          ); // DosenListView
-        },
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SavedUserSection(savedUsers: savedUsers),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(16, 8, 16, 4),
+            child: Text('Daftar Dosen', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+          ),
+          Expanded(
+            child: dosenState.when(
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, stack) => Center(child: Text('Error: $error')),
+              data: (dosenList) => DosenListWithSave(
+                dosenList: dosenList,
+                onRefresh: () => ref.invalidate(dosenNotifierProvider),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
