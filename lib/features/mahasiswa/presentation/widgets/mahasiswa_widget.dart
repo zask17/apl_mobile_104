@@ -1,186 +1,111 @@
 import 'package:flutter/material.dart';
-import 'package:apl_mobile_104/features/mahasiswa/data/models/mahasiswa_model.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../providers/mahasiswa_provider.dart';
+import '../../data/models/mahasiswa_model.dart';
 
-class ModernMahasiswaCard extends StatefulWidget {
-  final MahasiswaModel mahasiswa;
-  final VoidCallback? onTap;
-  final List<Color>? gradientColors;
-
-  const ModernMahasiswaCard({
-    Key? key,
-    required this.mahasiswa,
-    this.onTap,
-    this.gradientColors,
-  }) : super(key: key);
+class SavedMahasiswaSection extends ConsumerWidget {
+  final AsyncValue<List<Map<String, String>>> savedUsers;
+  const SavedMahasiswaSection({super.key, required this.savedUsers});
 
   @override
-  State<ModernMahasiswaCard> createState() => _ModernMahasiswaCardState();
-}
-
-class _ModernMahasiswaCardState extends State<ModernMahasiswaCard>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 150),
-      vsync: this,
-    );
-    _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.97,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // Menggunakan warna dari theme jika gradientColors null
-    final gradientColors = widget.gradientColors ??
-        [
-          Theme.of(context).primaryColor,
-          Theme.of(context).primaryColor.withOpacity(0.7),
-        ];
-
-    return GestureDetector(
-      onTapDown: (_) => _controller.forward(),
-      onTapUp: (_) {
-        _controller.reverse();
-        widget.onTap?.call();
-      },
-      onTapCancel: () => _controller.reverse(),
-      child: ScaleTransition(
-        scale: _scaleAnimation,
-        child: Container(
-          margin: const EdgeInsets.only(bottom: 16),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Colors.white, gradientColors[0].withOpacity(0.05)],
-            ),
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: gradientColors[0].withOpacity(0.1),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.storage_rounded, size: 16),
+              const SizedBox(width: 6),
+              const Text('Data Tersimpan di Local Storage',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              const Spacer(),
+              savedUsers.maybeWhen(
+                data: (users) => users.isNotEmpty
+                    ? TextButton(
+                  onPressed: () async {
+                    await ref.read(mahasiswaNotifierProvider.notifier).clearSavedMahasiswa();
+                    ref.invalidate(savedMahasiswaProvider);
+                  },
+                  child: const Text('Hapus Semua',
+                      style: TextStyle(color: Colors.red, fontSize: 12)),
+                )
+                    : const SizedBox.shrink(),
+                orElse: () => const SizedBox.shrink(),
               ),
             ],
-            border: Border.all(
-              color: gradientColors[0].withOpacity(0.1),
-              width: 1,
-            ),
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                // Avatar Profil dengan Inisial
-                Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: gradientColors,
+          const SizedBox(height: 8),
+          savedUsers.when(
+            loading: () => const LinearProgressIndicator(),
+            error: (err, stack) => const Text('Gagal membaca data'),
+            data: (users) {
+              if (users.isEmpty) return const Text('Belum ada data mahasiswa tersimpan',
+                  style: TextStyle(fontSize: 12, color: Colors.grey));
+              return ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: users.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    dense: true,
+                    title: Text(users[index]['username'] ?? '',
+                        maxLines: 1, overflow: TextOverflow.ellipsis),
+                    subtitle: Text('ID: ${users[index]['user_id']}'),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.close, size: 16, color: Colors.red),
+                      onPressed: () async {
+                        await ref.read(mahasiswaNotifierProvider.notifier)
+                            .removeSavedMahasiswa(users[index]['user_id']!);
+                        ref.invalidate(savedMahasiswaProvider);
+                      },
                     ),
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: gradientColors[0].withOpacity(0.3),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Center(
-                    child: Text(
-                      // Mengambil huruf pertama dari field 'name' API comments
-                      widget.mahasiswa.name.isNotEmpty
-                          ? widget.mahasiswa.name.substring(0, 1).toUpperCase()
-                          : '?',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                // Konten Informasi (Menyesuaikan dengan MahasiswaModel baru)
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.mahasiswa.name, // Menggunakan name
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: -0.3,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 8),
-                      _buildInfoRow(
-                        Icons.alternate_email_rounded,
-                        widget.mahasiswa.email, // Menggunakan email
-                      ),
-                      const SizedBox(height: 4),
-                      _buildInfoRow(
-                        Icons.comment_outlined,
-                        widget.mahasiswa.body, // Menampilkan isi komentar (body)
-                      ),
-                    ],
-                  ),
-                ),
-                // Icon Navigasi
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: gradientColors[0].withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(
-                    Icons.arrow_forward_ios_rounded,
-                    size: 16,
-                    color: gradientColors[0],
-                  ),
-                ),
-              ],
-            ),
+                  );
+                },
+              );
+            },
           ),
-        ),
+        ],
       ),
     );
   }
+}
 
-  Widget _buildInfoRow(IconData icon, String text) {
-    return Row(
-      children: [
-        Icon(icon, size: 14, color: Colors.grey[600]),
-        const SizedBox(width: 6),
-        Expanded(
-          child: Text(
-            text,
-            style: TextStyle(fontSize: 13, color: Colors.grey[700]),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-      ],
+class MahasiswaListWithSave extends ConsumerWidget {
+  final List<MahasiswaModel> mahasiswaList;
+  final VoidCallback onRefresh;
+  const MahasiswaListWithSave({super.key, required this.mahasiswaList, required this.onRefresh});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return RefreshIndicator(
+      onRefresh: () async => onRefresh(),
+      child: ListView.builder(
+        itemCount: mahasiswaList.length,
+        itemBuilder: (context, index) {
+          final mhs = mahasiswaList[index];
+          return Card(
+            margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            child: ListTile(
+              leading: CircleAvatar(child: Text('${mhs.id}')),
+              title: Text(mhs.name, maxLines: 1, overflow: TextOverflow.ellipsis),
+              subtitle: Text('${mhs.email}\n${mhs.body}',
+                  maxLines: 2, overflow: TextOverflow.ellipsis),
+              isThreeLine: true,
+              trailing: IconButton(
+                icon: const Icon(Icons.save),
+                onPressed: () async {
+                  await ref.read(mahasiswaNotifierProvider.notifier).saveSelectedMahasiswa(mhs);
+                  ref.invalidate(savedMahasiswaProvider);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Mahasiswa ${mhs.id} disimpan')));
+                },
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }

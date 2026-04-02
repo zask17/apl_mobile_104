@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:apl_mobile_104/core/widgets/widgets.dart';
-import 'package:apl_mobile_104/core/constants/constants.dart';
 import '../providers/mahasiswa_provider.dart';
 import '../widgets/mahasiswa_widget.dart';
 
@@ -11,6 +9,7 @@ class MahasiswaPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final mahasiswaState = ref.watch(mahasiswaNotifierProvider);
+    final savedMahasiswa = ref.watch(savedMahasiswaProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -18,35 +17,30 @@ class MahasiswaPage extends ConsumerWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh_rounded),
-            onPressed: () => ref.read(mahasiswaNotifierProvider.notifier).refresh(),
+            onPressed: () => ref.invalidate(mahasiswaNotifierProvider),
           ),
         ],
       ),
-      body: mahasiswaState.when(
-        loading: () => const LoadingWidget(),
-        error: (error, stack) => CustomErrorWidget(
-          message: 'Gagal memuat data: ${error.toString()}',
-          onRetry: () => ref.read(mahasiswaNotifierProvider.notifier).refresh(),
-        ),
-        data: (mahasiswaList) {
-          return RefreshIndicator(
-            onRefresh: () async => ref.read(mahasiswaNotifierProvider.notifier).refresh(),
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: mahasiswaList.length,
-              itemBuilder: (context, index) {
-                final colors = AppConstants.dashboardGradients[
-                index % AppConstants.dashboardGradients.length];
-
-                return ModernMahasiswaCard(
-                  mahasiswa: mahasiswaList[index],
-                  gradientColors: colors,
-                  onTap: () {},
-                );
-              },
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SavedMahasiswaSection(savedUsers: savedMahasiswa),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(16, 8, 16, 4),
+            child: Text('Daftar Mahasiswa (API Comments)',
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+          ),
+          Expanded(
+            child: mahasiswaState.when(
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, stack) => Center(child: Text('Error: $error')),
+              data: (mahasiswaList) => MahasiswaListWithSave(
+                mahasiswaList: mahasiswaList,
+                onRefresh: () => ref.invalidate(mahasiswaNotifierProvider),
+              ),
             ),
-          );
-        },
+          ),
+        ],
       ),
     );
   }
